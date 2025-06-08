@@ -1,42 +1,16 @@
-# Importing all necessary libraries
-import cv2
-import os
+from ultralytics import YOLO
 
-# Read the video from specified path
-cam = cv2.VideoCapture("C:\\Users\\rusyd\\Downloads\\tubes-prd\\training_video.mp4")
+# Load a model
+def main():
+    model = YOLO("yolo11n.yaml")  # build a new model from YAML
+    model = YOLO("yolo11n.pt")  # load a pretrained model (recommended for training)
+    model = YOLO("yolo11n.yaml").load("yolo11n.pt")  # build from YAML and transfer weights
+    results = model.train(data="C://Users//rusyd//Downloads//tubes-prd//prd_labeled_data//data.yaml", epochs=3000, imgsz=640)
 
-try:
-    
-    # creating a folder named data
-    if not os.path.exists('data'):
-        os.makedirs('data')
-
-# if not created then raise error
-except OSError:
-    print ('Error: Creating directory of data')
-
-# frame
-currentframe = 0
-
-while(True):
-    
-    # reading from frame
-    ret,frame = cam.read()
-
-    if ret:
-        # if video is still left continue creating images
-        name = './data/frame' + str(currentframe) + '.jpg'
-        print ('Creating...' + name)
-
-        # writing the extracted images
-        cv2.imwrite(name, frame)
-
-        # increasing counter so that it will
-        # show how many frames are created
-        currentframe += 1
-    else:
-        break
-
-# Release all space and windows once done
-cam.release()
-cv2.destroyAllWindows()
+# Train the model
+if __name__ == "__main__":
+    main()
+    # model.train(data="coco128.yaml", epochs=3)  # train the model
+    # model.val()  # evaluate the model on the validation set
+    # model.export(format="onnx")  # export the model to ONNX format
+    # model.predict(source="https://ultralytics.com/images/bus.jpg", show=True)  # predict with the model
